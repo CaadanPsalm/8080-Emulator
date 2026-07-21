@@ -4,12 +4,57 @@
 #include <stdint.h> 
 
 /*
+ConditionCodes - struct for the flags that are used for opcodes.
+
+z - Zero bit (1 if result of instruction is 0 | 0 if result of instruction is not 0)
+s - Sign bit (1 if a given number is from -128 to -1 | 0 if a given number is 0 to 127)
+p - Parity bit (1 if the number of '1' bits are even | 0 if the nunmber of '1' bits are odd)
+cy - Carry bit (Used by operations that use carries, like addition or subtraction.)
+ac - Auxillary Carry bit (Special carry bit used only for the DAA operation. A carry bit for the 3rd bit.)
+pad - a padding for the struct. Keeps the struct clean and for matching the actual 8080 processor that only uses the 5 bits.
+*/
+typedef struct ConditionCodes {
+    uint8_t z:1;
+    uint8_t s:1;
+    uint8_t p:1;
+    uint8_t cy:1;
+    uint8_t ac:1;
+    uint8_t pad:3;
+} ConditionCodes;
+
+/*
+State8080 - struct for the registers and state of the 8080 processor.
+
+a, b, c, d, e, h, l - Registers that are used for operations.
+sp - Stack Pointer. Points to the top of the stack and is used for PUSH, POP, CALL or RET operations.
+pc - Program Counter. Points to the next address in the memory of the next instruction for the CPU. Used for the disassembler.
+memory - Memory. Emulates the 8080's 16 bit memory space.
+cc - Condition Codes. Stores the condition from the struct.
+int_enable - Interrupt Enable Flag. Used by the opcodes 'EI' and 'DI' for signalling interrupts to the CPU.
+*/
+typedef struct State8080 {
+    uint8_t a;
+    uint8_t b;
+    uint8_t c;
+    uint8_t d;
+    uint8_t e;
+    uint8_t h;
+    uint8_t l;
+    uint16_t sp;
+    uint16_t pc;
+    uint8_t memory;
+    struct ConditionCodes cc;
+    uint8_t int_enable;
+} State8080;
+
+/*
+Disassemble8080OpCode - function that prints the operations made by the CPU according to 8080 opcodes.
+
 codebuffer -  a valid pointer to 8080 hex opcode
 pc - offset into the code
 
 returns the number of bytes of the opcode
 */
-
 int Disassemble8080OpCode (unsigned char *codebuffer, int pc) {
     unsigned char *code = &codebuffer[pc];
     int opbytes = 1;
@@ -290,6 +335,7 @@ int Disassemble8080OpCode (unsigned char *codebuffer, int pc) {
     }
     return opbytes;
 }
+
 
 int main (int argc, char**argv)
 {
