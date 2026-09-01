@@ -367,7 +367,7 @@ int Emulate8080OpCode(State8080* state) {
 
     switch(*opcode) 
     {
-        case 0x00:UnimplementedInstruction(state); break; //NOP - No Operation
+        case 0x00:break; //NOP - No Operation
         case 0x01:                                        //LXI - B, word
                   state->c = opcode[1];
                   state->b = opcode[2];
