@@ -340,6 +340,26 @@ void UnimplementedInstruction (State8080* state) {
     printf("Error: Unimplemented Instruction.\n");
     exit(1);
 }
+/*
+    offsetHelper - Helper function that combines the 2 8 bit registers h (high) and l (low) registers into an address in the 16 bit memory.
+
+    Explanation:
+    Uses the bitwise left-shift (<<) operator on h to move the 8 bit value 8 bits to the left, and performs the OR (|) operator to combine it with l;
+    e.g h = 1100 1010 
+        l = 1111 1001
+
+        Using the left-shift (<<) on h:
+        h = 1100 1010 0000 0000
+
+        Performing the OR (|) operation on h with l:
+        h = 1100 1010 0000 0000
+        l = 0000 0000 1111 1001
+        _______________________
+            1100 1010 1111 1001 -> Offset address to be returned.
+*/
+uint16_t inline offsetHelper (State8080 *state) {
+    return (state->h << 8) | state->l;     
+}
 
 int Emulate8080OpCode(State8080* state) {
     uint8_t *memory = state->memory;
