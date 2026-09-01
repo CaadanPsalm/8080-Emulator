@@ -340,7 +340,7 @@ void UnimplementedInstruction (State8080* state) {
     printf("Error: Unimplemented Instruction.\n");
     exit(1);
 }
-/*n
+/*
     offsetHelper - Helper function that combines the 2 8 bit registers h (high) and l (low) registers into an address in the 16 bit memory.
 
     Explanation:
