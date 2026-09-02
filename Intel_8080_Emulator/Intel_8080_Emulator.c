@@ -8,7 +8,7 @@ ConditionCodes - struct for the flags that are used for opcodes.
 
 z - Zero bit (1 if result of instruction is 0 | 0 if result of instruction is not 0)
 s - Sign bit (1 if a given number is from -128 to -1 | 0 if a given number is 0 to 127)
-p - Parity bit (1 if the number of '1' bits are even | 0 if the nunmber of '1' bits are odd)
+p - Parity bit (1 if the number of '1' bits are even | 0 if the number of '1' bits are odd)
 cy - Carry bit (Used by operations that use carries, like addition or subtraction.)
 ac - Auxillary Carry bit (Special carry bit used only for the DAA operation. A carry bit for the 3rd bit.)
 pad - a padding for the struct. Keeps the struct clean and for matching the actual 8080 processor that only uses the 5 bits.
@@ -361,6 +361,70 @@ uint16_t inline offsetHelper (State8080 *state) {
     return (state->h << 8) | state->l;     
 }
 
+/*
+   additionHelper - Helper function that facilitates the ADD opcode.
+*/
+uint16_t inline additionHelper (State8080 *state, uint8_t opcode){
+    uint16_t result; 
+    switch(opcode)
+    {
+        case 0x80:  result = (uint16_t) state->a + (uint16_t) state->b; //ADD B
+        case 0x81:  result = (uint16_t) state->a + (uint16_t) state->c; //ADD C
+        case 0x82:  result = (uint16_t) state->a + (uint16_t) state->d; //ADD D
+        case 0x83:  result = (uint16_t) state->a + (uint16_t) state->e; //ADD E
+        case 0x84:  result = (uint16_t) state->a + (uint16_t) state->h; //ADD H
+        case 0x85:  result = (uint16_t) state->a + (uint16_t) state->l; //ADD L
+        case 0x86:  result = (uint16_t) state->a + (uint16_t) state->memory[offsetHelper(state)]; //ADD M
+        case 0x87:  result = (uint16_t) state->a + (uint16_t) state->a; //ADD A
+    }
+
+    //Checking Condition Flags:
+    /*Zero Flag:
+        Explanation:
+            result is a 16-bit integer from the addition of 2-8 bit integers.
+            0xFF is 1111 1111 in binary (which is just 8 bits).
+            using AND-ing, we can isolate the last 2 bytes in the 16 bit result integer 
+            (therefore, we only get the 8 bits, which is what we want as the memory is only 8 bits!) 
+            doing result == 0 will result in errors, as an example:
+            a =  0000 0000 1111 1111 
+            b =  0000 0000 0000 0001
+            result = 0000 0001 0000 0000
+            using the result == 0 method:
+                state cc.z = 0 (!)
+            using the AND-ing method:
+             result = 0000 0001 0000 0000
+             0x00FF   = 0000 0000 1111 1111
+             ____________________________
+                      0000 0000 0000 0000
+            Therefore, state cc.z = 1 (which is correct!)
+    */
+   state->cc.z = ((result & 0xFF) == 0);
+
+   /*Sign Flag:
+        Explanation:
+            result is a 16-bit integer from the addition of 2 8-bit integers.
+            0x80 is 1000 0000 in binary (which is just 8 bits).
+            using AND-ing, we can isolate the 7th bit, which is the sign bit. If it is 1, 
+            then the sign flag is 1 (it also means the integer is negative)  and vice versa.
+   */
+  state->cc.s = ((result & 0x80) != 0);
+
+   /*Carry Flag:
+        Explanation:
+            result is a 16-bit integer from the addition of 2 8-bit integers.
+            0xFF is 1111 1111 in binary (which is just 8 bits).
+            going over 0xFF means that the result has a carry
+   */
+  state->cc.cy = ((result > 0xFF));
+
+  /*Parity Bit:
+  */
+ 
+
+
+}
+
+
 int Emulate8080OpCode(State8080* state) {
     uint8_t *memory = state->memory;
     unsigned char *opcode = &memory[state->pc];
@@ -506,7 +570,7 @@ int Emulate8080OpCode(State8080* state) {
         case 0x7e:state->a = state->memory[offsetHelper(state)]; break;  //MOV A, M
         case 0x7f:state->a = state->a; break;  //MOV A, A
         
-        case 0x80:UnimplementedInstruction(state); break;
+        case 0x80:; break; // ADD B
         case 0x81:UnimplementedInstruction(state); break;
         case 0x82:UnimplementedInstruction(state); break;
         case 0x83:UnimplementedInstruction(state); break;
