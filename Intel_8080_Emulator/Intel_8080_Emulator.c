@@ -368,14 +368,14 @@ uint16_t inline additionHelper (State8080 *state, uint8_t opcode){
     uint16_t result; 
     switch(opcode)
     {
-        case 0x80:  result = (uint16_t) state->a + (uint16_t) state->b; //ADD B
-        case 0x81:  result = (uint16_t) state->a + (uint16_t) state->c; //ADD C
-        case 0x82:  result = (uint16_t) state->a + (uint16_t) state->d; //ADD D
-        case 0x83:  result = (uint16_t) state->a + (uint16_t) state->e; //ADD E
-        case 0x84:  result = (uint16_t) state->a + (uint16_t) state->h; //ADD H
-        case 0x85:  result = (uint16_t) state->a + (uint16_t) state->l; //ADD L
-        case 0x86:  result = (uint16_t) state->a + (uint16_t) state->memory[offsetHelper(state)]; //ADD M
-        case 0x87:  result = (uint16_t) state->a + (uint16_t) state->a; //ADD A
+        case 0x80:  result = (uint16_t) state->a + (uint16_t) state->b;break; //ADD B
+        case 0x81:  result = (uint16_t) state->a + (uint16_t) state->c;break; //ADD C
+        case 0x82:  result = (uint16_t) state->a + (uint16_t) state->d;break; //ADD D
+        case 0x83:  result = (uint16_t) state->a + (uint16_t) state->e;break; //ADD E
+        case 0x84:  result = (uint16_t) state->a + (uint16_t) state->h;break; //ADD H
+        case 0x85:  result = (uint16_t) state->a + (uint16_t) state->l;break; //ADD L
+        case 0x86:  result = (uint16_t) state->a + (uint16_t) state->memory[offsetHelper(state)];break; //ADD M
+        case 0x87:  result = (uint16_t) state->a + (uint16_t) state->a;break; //ADD A
     }
 
     //Checking Condition Flags:
@@ -418,10 +418,9 @@ uint16_t inline additionHelper (State8080 *state, uint8_t opcode){
   state->cc.cy = ((result > 0xFF));
 
   /*Parity Bit:
+  //TODO
   */
- 
-
-
+  return result & 0xFF;
 }
 
 
@@ -570,7 +569,7 @@ int Emulate8080OpCode(State8080* state) {
         case 0x7e:state->a = state->memory[offsetHelper(state)]; break;  //MOV A, M
         case 0x7f:state->a = state->a; break;  //MOV A, A
         
-        case 0x80:; break; // ADD B
+        case 0x80:state->a = additionHelper(state, opcode); break; // ADD B
         case 0x81:UnimplementedInstruction(state); break;
         case 0x82:UnimplementedInstruction(state); break;
         case 0x83:UnimplementedInstruction(state); break;
