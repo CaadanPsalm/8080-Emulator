@@ -413,7 +413,7 @@ uint16_t inline additionHelper (State8080 *state, uint8_t opcode){
         Explanation:
             result is a 16-bit integer from the addition of 2-8 bit integers.
             0xFF is 1111 1111 in binary (which is just 8 bits).
-            using AND-ing, we can isolate the last 2 bytes in the 16 bit result integer 
+            using AND-ing, we can isolate the last 1 byte (8 bits) in the 16 bit result integer 
             (therefore, we only get the 8 bits, which is what we want as the memory is only 8 bits!) 
             doing result == 0 will result in errors, as an example:
             a =  0000 0000 1111 1111 
