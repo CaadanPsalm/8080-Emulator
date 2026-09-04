@@ -599,16 +599,16 @@ int Emulate8080OpCode(State8080* state) {
         case 0x7e:state->a = state->memory[offsetHelper(state)]; break;  //MOV A, M
         case 0x7f:state->a = state->a; break;  //MOV A, A
         
-        case 0x80:state->a = additionHelper(state, opcode); break; // ADD B
-        case 0x81:UnimplementedInstruction(state); break;
-        case 0x82:UnimplementedInstruction(state); break;
-        case 0x83:UnimplementedInstruction(state); break;
-        case 0x84:UnimplementedInstruction(state); break;
-        case 0x85:UnimplementedInstruction(state); break;
-        case 0x86:UnimplementedInstruction(state); break;
-        case 0x87:UnimplementedInstruction(state); break;
-        case 0x88:UnimplementedInstruction(state); break;
-        case 0x89:UnimplementedInstruction(state); break;
+        case 0x80:state->a = additionHelper(state, *opcode); break; // ADD B
+        case 0x81:state->a = additionHelper(state, *opcode); break; // ADD C
+        case 0x82:state->a = additionHelper(state, *opcode); break; // ADD D 
+        case 0x83:state->a = additionHelper(state, *opcode); break; // ADD E
+        case 0x84:state->a = additionHelper(state, *opcode); break; // ADD H
+        case 0x85:state->a = additionHelper(state, *opcode); break; // ADD L
+        case 0x86:state->a = additionHelper(state, *opcode); break; // ADD M 
+        case 0x87:state->a = additionHelper(state, *opcode); break; // ADD A
+        case 0x88:UnimplementedInstruction(state); break; 
+        case 0x89:UnimplementedInstruction(state); break; 
         case 0x8a:UnimplementedInstruction(state); break;
         case 0x8b:UnimplementedInstruction(state); break;
         case 0x8c:UnimplementedInstruction(state); break;
