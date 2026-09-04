@@ -362,6 +362,36 @@ uint16_t inline offsetHelper (State8080 *state) {
 }
 
 /*
+    parityHelper - Helper function that finds if a given byte has odd or even parity.
+
+    Explanation:
+    Parity is whether the number of 1's in a given byte is even or odd.
+
+    The program loops through the byte bit-by-bit, and compares the least significant bit using AND-ing on 0000 0001
+    thereby isolating only a single bit.
+
+    result >>= 1 achieves this by shifting the given byte one bit to the left, removing the least significant bit
+    after comparing it.
+
+    If the least significant bit is 1, then the bits increase by one.
+    Then, we simply modulo bit with 2 to find if it is even/odd
+    and return 1 if even and 0 if odd.
+*/
+int inline parityHelper (uint8_t result) {
+    int parity = 0;
+    int bits = 0;
+    int i = 0;
+    for(i = 0; i < 8; ++i){
+        if(result & 0x01)
+            bits++;
+        result >>= 1;
+    }
+    
+    if(bits % 2 == 0)
+        parity = 1;
+    return parity;
+}
+/*
    additionHelper - Helper function that facilitates the ADD opcode.
 */
 uint16_t inline additionHelper (State8080 *state, uint8_t opcode){
