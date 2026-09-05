@@ -393,6 +393,9 @@ int inline parityHelper (uint8_t result) {
 }
 /*
    additionHelper - Helper function that facilitates the ADD opcode.
+
+   state - the state struct that emulates the CPU's current state
+   opcode - the opcode that will be emulated
 */
 uint16_t inline additionHelper (State8080 *state, uint8_t opcode){
     uint16_t result; 
